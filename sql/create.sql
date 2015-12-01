@@ -22,3 +22,5 @@ CREATE TABLE `crimes` (
  `longitude` varchar(100) NOT NULL,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10285324 DEFAULT CHARSET=latin1
+
+update crimes set community_area = 27 where community_area = 26;
