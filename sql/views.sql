@@ -26,7 +26,7 @@ CREATE TABLE view_incidents_year_com_type
     year INT NOT NULL,
     area_code INT NOT NULL,
     type VARCHAR(100) NOT NULL,
-    total INT NOT NULL,
+    total INT NOT NULL
 );
 
 INSERT INTO view_incidents_year_com_type
