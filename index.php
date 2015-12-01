@@ -19,8 +19,8 @@
 </head>
 <body>
 
-	<!--<div id="map"></div>-->
-
+	<div id="map"></div>
+	<div>
 	<?
 		$sample_query = "select * from view_total_incidents_per_type;";
 	    $result = mysqli_query($link, $sample_query);
@@ -30,5 +30,6 @@
 	    	echo "<p class='text-lowercase'>" . $q["primary_type"] . " - " . $q["total_incidents"] . "</p>";
 	    }
     ?>
+    </div>
 </body>
 </html>

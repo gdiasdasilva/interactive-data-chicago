@@ -5,7 +5,8 @@ $( document ).ready(function()
     var bounds = new google.maps.LatLngBounds();
     
     var mapOptions = {
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      draggable: false
     };
     
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -14,9 +15,9 @@ $( document ).ready(function()
     for (var d in districts) {
       
       if(index % 2 == 0)
-        fColor = '#FF0000';
+        fColor = '#deebf7';
       else
-        fColor = '#00b33c';
+        fColor = '#3182bd';
 
       index++;
 
