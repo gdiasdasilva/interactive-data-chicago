@@ -1,6 +1,6 @@
 CREATE TABLE view_total_incidents_per_ca
 (
-    community_area VARCHAR(30) NOT NULL PRIMARY KEY,
+    community_area VARCHAR(100) NOT NULL PRIMARY KEY,
     total_incidents INT NOT NULL
 );
 
@@ -10,7 +10,7 @@ FROM crimes
 GROUP BY community_area;
 
 CREATE TABLE view_total_incidents_per_type (
-    primary_type VARCHAR(30) NOT NULL PRIMARY KEY,
+    primary_type VARCHAR(100) NOT NULL PRIMARY KEY,
     total_incidents INT NOT NULL
 );
 
