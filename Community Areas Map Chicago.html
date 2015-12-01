@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Markers demo w/ homicides locations</title>
+  <script type="text/javascript" src="districts.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <script type="text/javascript">
+    var map, polys = [];
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    for (var d in districts) {
+      console.log(1);
+      var i = 0;
+      var pts = [];
+      for (var j = 0; j < districts[d].length; j++) {
+        pts[i++] = new google.maps.LatLng(districts[d][j][1], districts[d][j][0]);
+        bounds.extend(pts[i-1]);
+      }
+      var poly = new google.maps.Polygon({
+        paths: pts,
+        strokeColor: '#000000',
+        strokeOpacity: 1,
+        strokeWeight: 0.5,
+        fillColor: '#FF0000',
+        fillOpacity: 0.3,
+      });
+      polys.push(poly);
+    };
+    for (var i = 0; i < polys.length; i++) {
+      polys[i].setMap(map);
+    };
+    // Set the center of the map
+    map.center = bounds.getCenter();
+    // Make the map fit all markers
+    map.fitBounds(bounds);
+
+    </script>
+  </body>
+  </html>
