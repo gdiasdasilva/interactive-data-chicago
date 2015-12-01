@@ -37,13 +37,49 @@ $(document).ready(function() {
             pts[i++] = new google.maps.LatLng(coord[j][1], coord[j][0]);
             bounds.extend(pts[i - 1]);
         }
+        
+        var marker = new MarkerWithLabel({
+            position: new google.maps.LatLng(0, 0),
+            draggable: false,
+            raiseOnDrag: false,
+            map: map,
+            labelContent: area_number,
+            labelAnchor: new google.maps.Point(30, 20),
+            labelClass: "labels", // the CSS class for the label
+            labelStyle: {
+                opacity: 1.0
+            },
+            icon: "http://placehold.it/1x1",
+            visible: false
+        });
+
+        var polColor = rgbToHex(hsvToRgb(0, sat * 100, 100));
         var poly = new google.maps.Polygon({
             paths: pts,
             strokeColor: 'black',
             strokeOpacity: 1,
             strokeWeight: 0.4,
-            fillColor: rgbToHex(hsvToRgb(0, sat * 100, 100)),
-            fillOpacity: 0.7,
+            fillColor: polColor,
+            fillOpacity: 0.7
+        });
+
+        google.maps.event.addListener(poly, 'mouseover', function(event) {
+            this.setOptions({
+                strokeColor: 'black',
+                strokeWeight: 2,
+                fillOpacity: 1
+            });
+            marker.setPosition(event.latLng);
+            marker.setVisible(true);
+        });
+
+        google.maps.event.addListener(poly, 'mouseout', function(event) {
+            this.setOptions({
+                strokeColor: 'black',
+                strokeWeight: 0.4,
+                fillOpacity: 0.7
+            });
+            marker.setVisible(false);
         });
         polys.push(poly);
     };
