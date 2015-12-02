@@ -1,74 +1,5 @@
 $(document).ready(function() {
-    var incidents = [],
-        max = 0,
-        min = 0;
-    $.ajax({
-        url: 'ajax.php',
-        type: 'GET',
-        dataType: 'json',
-        async: false
-    }).done(function(res) {
-        incidents = res.incidents;
-        max = res.max;
-        min = res.min;
-    });
-    var map, polys = [];
-    var fColor;
-    var bounds = new google.maps.LatLngBounds();
-    var mapOptions = {
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        styles: [{
-            featureType: 'all',
-            elementType: 'labels',
-            stylers: [{
-                visibility: 'off'
-            }],
-        }]
-    };
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    for (var d in districts) {
-        var name = districts[d].name,
-            coord = districts[d].simple_shape.coordinates[0][0],
-            area_number = districts[d].metadata.AREA_NUMBE;
-        var sat = (incidents[area_number] - min) / ((max - min) * 1.0);
-        var pts = [];
-        for (var j = 0; j < coord.length; j++) {
-            pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
-            bounds.extend(pts[j]);
-        }
-        var marker = new MarkerWithLabel({
-            position: new google.maps.LatLng(0, 0),
-            draggable: false,
-            raiseOnDrag: false,
-            map: map,
-            labelContent: area_number,
-            labelAnchor: new google.maps.Point(30, 20),
-            labelClass: "labels", // the CSS class for the label
-            labelStyle: {
-                opacity: 1.0
-            },
-            icon: "http://placehold.it/1x1",
-            visible: false
-        });
-        var polColor = rgbToHex(hsvToRgb(0, sat * 100, 100));
-        var poly = new google.maps.Polygon({
-            paths: pts,
-            strokeColor: 'black',
-            strokeOpacity: 1,
-            strokeWeight: 0.4,
-            fillColor: polColor,
-            fillOpacity: 0.7
-        });
-        addListeners(poly, marker);
-        polys.push(poly);
-    };
-    for (var i = 0; i < polys.length; i++) {
-        polys[i].setMap(map);
-    };
-    // Set the center of the map
-    map.center = bounds.getCenter();
-    // Make the map fit all markers
-    map.fitBounds(bounds);
+    incidentsPerCommunityArea();
 });
 
 function addListeners(poly, marker) {
@@ -158,3 +89,100 @@ function hsvToRgb(h, s, v) {
     }
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
+
+function incidentsPerCommunityArea() {
+    var incidents = [],
+        max = 0,
+        min = 0;
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca',
+            year: "2003"
+        },
+        async: false
+    }).done(function(res) {
+        incidents = res.incidents;
+        max = res.max;
+        min = res.min;
+    });
+    drawIncidentsPerCommunityAreaMap(incidents, min, max);
+}
+
+function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
+    $('#map').empty();
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+            featureType: 'all',
+            elementType: 'labels',
+            stylers: [{
+                visibility: 'off'
+            }],
+        }]
+    };
+    var polys = [];
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    for (var d in districts) {
+        var name = districts[d].name,
+            coord = districts[d].simple_shape.coordinates[0][0],
+            area_number = districts[d].metadata.AREA_NUMBE,
+            sat = (incidents[area_number] - min) / ((max - min) * 1.0),
+            pts = [];
+        for (var j = 0; j < coord.length; j++) {
+            pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
+            bounds.extend(pts[j]);
+        }
+        var marker = new MarkerWithLabel({
+            position: new google.maps.LatLng(0, 0),
+            draggable: false,
+            raiseOnDrag: false,
+            map: map,
+            labelContent: area_number,
+            labelAnchor: new google.maps.Point(30, 20),
+            labelClass: "labels", // the CSS class for the label
+            labelStyle: {
+                opacity: 1.0
+            },
+            icon: "http://placehold.it/1x1",
+            visible: false
+        });
+        var poly = new google.maps.Polygon({
+            paths: pts,
+            strokeColor: 'black',
+            strokeOpacity: 1,
+            strokeWeight: 0.4,
+            fillColor: rgbToHex(hsvToRgb(0, sat * 100, 100)),
+            fillOpacity: 0.7
+        });
+        addListeners(poly, marker);
+        polys.push(poly);
+    };
+    for (var i = 0; i < polys.length; i++) {
+        polys[i].setMap(map);
+    };
+    map.center = bounds.getCenter();
+    map.fitBounds(bounds);
+}
+$(document).ready(function($) {
+    $('#year-filter').on('change', function(event) {
+        var year = $(this).val();
+        $.ajax({
+            url: 'ajax.php',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                action: 'incidents_per_ca',
+                year: year
+            },
+        }).done(function(res) {
+            var incidents = res.incidents,
+                max = res.max,
+                min = res.min;
+            drawIncidentsPerCommunityAreaMap(incidents, min, max);
+        })
+    });
+});
