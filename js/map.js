@@ -209,13 +209,17 @@ function showCommunityInfo(area_number, year)
             number: parseInt(area_number)
         },
     }).done(function(res) {
-        writeCommunityInfo(getAreaName(area_number), res[0], res[1], res[2], year);
+        writeCommunityInfo(getAreaName(area_number), res[0], res[1], res[2], year, res[3], res[4], res[5], res[6]);
     })
 }
 
-function writeCommunityInfo(city, incidents, ratio, population, year) {
-    var info = "<p><strong>" + city + "</strong> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ".</p>"
-        + "<p>This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people.</p>";
+function writeCommunityInfo(city, incidents, ratio, population, year, white, hispanic, asian, black) {
+    console.log(white);
+    var general_info = "<p><b>" + city + "</b> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ". "
+        + "This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people. " + 
+          "In <b>" + city + "</b>:</p><ul><li>" + Math.round(white/population * 100) + "% of the population is <b>white</b>.</li><li>" + Math.round(hispanic/population*100) +
+          "% of the population is <b>hispanic</b>.</li><li>" + Math.round(asian/population*100) + "% of the population is <b>asian</b>,</li><li>" + 
+          Math.round(black/population*100) + "% of the population is <b>black</b>.</li></ul>";
     $('#ca-info').append("<hr>");
-    $('#ca-info').append(info);
+    $('#ca-info').append(general_info);
 }
