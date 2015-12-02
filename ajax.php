@@ -28,18 +28,20 @@ if ($action == 'incidents_per_ca') {
 if ($action == 'incidents_per_ca_info') {
     $year = $_POST['year'];
     $area_number = $_POST['number'];
-    
-    $sample_query = "select sum(total) as total_incidents from view_incidents_year_com_type where area_code = $area_number and year = $year group by area_code";
-    
+    $sample_query = "select area_code, total, (white+hispanic+asian+black) as population from (select area_code, sum(total) as total from view_incidents_year_com_type where year=$year and area_code = $area_number group by area_code) t1 join census on t1.area_code=census.community_area";
     $result = mysqli_query($link, $sample_query);
     $incidents = 0;
-    
+    $ratio = 0;
+    $population = 0;
+
     foreach ($result as $q)
-    {    
-      $incidents = $q["total_incidents"];
+    {
+      $population = $q['population'];    
+      $ratio = $q['total']/$q['population'];
+      $incidents = $q["total"];
     }
 
-    echo json_encode($incidents);
+    echo json_encode([$incidents, $ratio, $population]);
 }
 if ($action == 'crime_types') {
     $year = $_POST['year'];

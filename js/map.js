@@ -181,7 +181,7 @@ function updateMap(year) {
 // Writes stats next to the map
 function writeStats(city, incidents, year, population) {
     var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents/population * 100) | 0)+ ' crimes per 100 people. Mouseover the other areas to see some details!';
-    console.log(info);
+    //console.log(info);
     $('#year-info').html(info);
 }
 
@@ -209,13 +209,13 @@ function showCommunityInfo(area_number, year)
             number: parseInt(area_number)
         },
     }).done(function(res) {
-        var incidents = res;
-        writeCommunityInfo(getAreaName(area_number), incidents, year);
+        writeCommunityInfo(getAreaName(area_number), res[0], res[1], res[2], year);
     })
 }
 
-function writeCommunityInfo(city, incidents, year) {
-    var info = "<p><strong>" + city + "</strong> had " + incidents + " criminal incidents in " + year + ".</p>"
+function writeCommunityInfo(city, incidents, ratio, population, year) {
+    var info = "<p><strong>" + city + "</strong> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ".</p>"
+        + "<p>This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people.</p>";
     $('#ca-info').append("<hr>");
     $('#ca-info').append(info);
 }
