@@ -22,6 +22,10 @@ function addListeners(poly, marker) {
         });
         marker.setVisible(false);
     });
+
+    google.maps.event.addListener(poly, 'click', function(event) {
+        showCommunityInfo(marker.areaNumber, $('#year-filter').val());
+    });
 }
 
 function rgbToHex(rgb) {
@@ -128,6 +132,7 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             labelStyle: {
                 opacity: 1.0
             },
+            areaNumber: area_number,
             icon: "http://placehold.it/1x1",
             visible: false
         });
@@ -190,4 +195,27 @@ function getAreaName(area_code) {
 function updateCommunityInfo(name, area_number){
     var info = "<h4>" + name + " <small>(" + area_number + ")</small></h4>";
     return info;
+}
+
+function showCommunityInfo(area_number, year)
+{
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca_info',
+            year: year,
+            number: parseInt(area_number)
+        },
+    }).done(function(res) {
+        var incidents = res;
+        writeCommunityInfo(getAreaName(area_number), incidents, year);
+    })
+}
+
+function writeCommunityInfo(city, incidents, year) {
+    var info = "<p><strong>" + city + "</strong> had " + incidents + " criminal incidents in " + year + ".</p>"
+    $('#ca-info').append("<hr>");
+    $('#ca-info').append(info);
 }
