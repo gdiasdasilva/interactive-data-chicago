@@ -31,13 +31,11 @@ $(document).ready(function() {
             coord = districts[d].simple_shape.coordinates[0][0],
             area_number = districts[d].metadata.AREA_NUMBE;
         var sat = (incidents[area_number] - min) / ((max - min) * 1.0);
-        var i = 0;
         var pts = [];
         for (var j = 0; j < coord.length; j++) {
-            pts[i++] = new google.maps.LatLng(coord[j][1], coord[j][0]);
-            bounds.extend(pts[i - 1]);
+            pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
+            bounds.extend(pts[j]);
         }
-        
         var marker = new MarkerWithLabel({
             position: new google.maps.LatLng(0, 0),
             draggable: false,
@@ -52,7 +50,6 @@ $(document).ready(function() {
             icon: "http://placehold.it/1x1",
             visible: false
         });
-
         var polColor = rgbToHex(hsvToRgb(0, sat * 100, 100));
         var poly = new google.maps.Polygon({
             paths: pts,
@@ -62,25 +59,7 @@ $(document).ready(function() {
             fillColor: polColor,
             fillOpacity: 0.7
         });
-
-        google.maps.event.addListener(poly, 'mouseover', function(event) {
-            this.setOptions({
-                strokeColor: 'black',
-                strokeWeight: 2,
-                fillOpacity: 1
-            });
-            marker.setPosition(event.latLng);
-            marker.setVisible(true);
-        });
-
-        google.maps.event.addListener(poly, 'mouseout', function(event) {
-            this.setOptions({
-                strokeColor: 'black',
-                strokeWeight: 0.4,
-                fillOpacity: 0.7
-            });
-            marker.setVisible(false);
-        });
+        addListeners(poly, marker);
         polys.push(poly);
     };
     for (var i = 0; i < polys.length; i++) {
@@ -91,6 +70,26 @@ $(document).ready(function() {
     // Make the map fit all markers
     map.fitBounds(bounds);
 });
+
+function addListeners(poly, marker) {
+    google.maps.event.addListener(poly, 'mouseover', function(event) {
+        this.setOptions({
+            strokeColor: 'black',
+            strokeWeight: 2,
+            fillOpacity: 1
+        });
+        marker.setPosition(event.latLng);
+        marker.setVisible(true);
+    });
+    google.maps.event.addListener(poly, 'mouseout', function(event) {
+        this.setOptions({
+            strokeColor: 'black',
+            strokeWeight: 0.4,
+            fillOpacity: 0.7
+        });
+        marker.setVisible(false);
+    });
+}
 
 function rgbToHex(rgb) {
     return "#" + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
