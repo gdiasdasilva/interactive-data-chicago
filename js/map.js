@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    incidentsPerCommunityArea();
+    updateMap(2003);
 });
 
 function addListeners(poly, marker) {
@@ -90,27 +90,6 @@ function hsvToRgb(h, s, v) {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-function incidentsPerCommunityArea() {
-    var incidents = [],
-        max = 0,
-        min = 0;
-    $.ajax({
-        url: 'ajax.php',
-        type: 'post',
-        dataType: 'json',
-        data: {
-            action: 'incidents_per_ca',
-            year: "2003"
-        },
-        async: false
-    }).done(function(res) {
-        incidents = res.incidents;
-        max = res.max;
-        min = res.min;
-    });
-    drawIncidentsPerCommunityAreaMap(incidents, min, max);
-}
-
 function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     $('#map').empty();
     var bounds = new google.maps.LatLngBounds();
@@ -126,10 +105,10 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     };
     var polys = [];
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    for (var d in districts) {
-        var name = districts[d].name,
-            coord = districts[d].simple_shape.coordinates[0][0],
-            area_number = districts[d].metadata.AREA_NUMBE,
+    for (var d in geolocation) {
+        var name = geolocation[d].name,
+            coord = geolocation[d].simple_shape.coordinates[0][0],
+            area_number = geolocation[d].metadata.AREA_NUMBE,
             sat = (incidents[area_number] - min) / ((max - min) * 1.0),
             pts = [];
         for (var j = 0; j < coord.length; j++) {
@@ -167,22 +146,41 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     map.center = bounds.getCenter();
     map.fitBounds(bounds);
 }
+// Handle year change
 $(document).ready(function($) {
     $('#year-filter').on('change', function(event) {
         var year = $(this).val();
-        $.ajax({
-            url: 'ajax.php',
-            type: 'post',
-            dataType: 'json',
-            data: {
-                action: 'incidents_per_ca',
-                year: year
-            },
-        }).done(function(res) {
-            var incidents = res.incidents,
-                max = res.max,
-                min = res.min;
-            drawIncidentsPerCommunityAreaMap(incidents, min, max);
-        })
+        updateMap(year);
     });
 });
+
+function updateMap(year) {
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca',
+            year: year
+        },
+    }).done(function(res) {
+        var incidents = res.incidents,
+            max = res.max.total / res.max.population,
+            min = res.min.total / res.min.population;
+        drawIncidentsPerCommunityAreaMap(incidents, min, max);
+        writeStats(getAreaName(res.max.area_code), res.max.total, year, res.max.population);
+    })
+}
+// Writes stats next to the map
+function writeStats(city, incidents, year, population) {
+    var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + (incidents/population * 100)+ ' crimes per 100 people. Mouseover the other areas to see some details!';
+    console.log(info);
+    $('#year-info').html(info);
+}
+
+function getAreaName(area_code) {
+  for (var g in geolocation) {
+    if (geolocation[g].metadata.AREA_NUMBE == area_code)
+      return geolocation[g].name;
+  }
+}

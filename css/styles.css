@@ -15,7 +15,11 @@ html, body {
      font-size: 10px;
      font-weight: bold;
      text-align: center;
-     width: 65px;     
+     width: 65px;
      border: 2px solid black;
      white-space: nowrap;
-   }
+}
+
+.filters {
+     margin-bottom: 20px;
+}

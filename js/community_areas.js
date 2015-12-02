@@ -1,4 +1,4 @@
-var districts = [
+var geolocation = [
 {
     "kind": "Community Area",
     "set": "/1.0/boundary-set/community-areas/",
