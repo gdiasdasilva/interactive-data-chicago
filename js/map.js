@@ -173,7 +173,7 @@ function updateMap(year) {
 }
 // Writes stats next to the map
 function writeStats(city, incidents, year, population) {
-    var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + (incidents/population * 100)+ ' crimes per 100 people. Mouseover the other areas to see some details!';
+    var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents/population * 100) | 0)+ ' crimes per 100 people. Mouseover the other areas to see some details!';
     console.log(info);
     $('#year-info').html(info);
 }
