@@ -1,7 +1,8 @@
 CREATE TABLE area_codes (
     code INT NOT NULL,
     area VARCHAR(50) NOT NULL
-)
+);
+
 INSERT INTO area_codes (code, area) VALUES
     (08,"Near North Side"),
     (32,"Loop"),
