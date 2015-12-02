@@ -27,6 +27,12 @@
                 <div class="filters">
                     <h3 class="text-center">Info</h3>
                     <hr>
+                    <div class="panel">
+                        <div class="panel-body">
+                            <p id="ca-info">lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy
+                        eirmod tempor invidunt ut labore et dolore magna aliquyam erat sed diam</p>
+                        </div>
+                    </div>
                     <label>Year</label>
                     <select id="year-filter" class="form-control">
                         <? foreach (range(2003, 2014) as $y):?>

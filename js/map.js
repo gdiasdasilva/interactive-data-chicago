@@ -9,8 +9,10 @@ function addListeners(poly, marker) {
             strokeWeight: 2,
             fillOpacity: 1
         });
-        marker.setPosition(event.latLng);
-        marker.setVisible(true);
+        // marker.setPosition(event.latLng);
+        // marker.setVisible(true);
+
+        $("#ca-info").html(marker.labelContent);
     });
     google.maps.event.addListener(poly, 'mouseout', function(event) {
         this.setOptions({
@@ -120,7 +122,7 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             draggable: false,
             raiseOnDrag: false,
             map: map,
-            labelContent: area_number,
+            labelContent: updateCommunityInfo(name, area_number),
             labelAnchor: new google.maps.Point(30, 20),
             labelClass: "labels", // the CSS class for the label
             labelStyle: {
@@ -183,4 +185,9 @@ function getAreaName(area_code) {
     if (geolocation[g].metadata.AREA_NUMBE == area_code)
       return geolocation[g].name;
   }
+}
+
+function updateCommunityInfo(name, area_number){
+    var info = "<h4>" + name + " <small>(" + area_number + ")</small></h4>";
+    return info;
 }
