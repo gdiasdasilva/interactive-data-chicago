@@ -23,18 +23,34 @@
             </div>
         </div>
         <div class="row">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel"></h4>
+              </div>
+              <div class="modal-body">                
+                    <p id="modal-ca-info"></p>                
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>                
+              </div>
+            </div>
+          </div>
+        </div>
             <div class="col-md-7 col-md-offset-1 well" id="map" style="height: 500px">
             </div>
             <div class="col-md-3">
                 <div class="filters">
                     <h3 class="text-center">Info</h3>
-                    <hr>
+                    <hr> 
                     <div class="panel">
-                        <div class="panel-body">
-                            <p id="ca-info">lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam nonumy
-                        eirmod tempor invidunt ut labore et dolore magna aliquyam erat sed diam</p>
-                        </div>
+                    <div class="panel-body">
+                        <p id="ca-info"></p>
                     </div>
+                    </div>                   
                     <label>Year</label>
                     <select id="year-filter" class="form-control">
                         <? foreach (range(2003, 2014) as $y):?>
@@ -52,7 +68,7 @@
         </div>
         <div class="row">
         <div class="col-md-10 col-md-offset-1 well">
-        <table id="my-table" class="table">
+        <table id="my-table" class="table table-bordered">
             <tr>
                 <thead>
                     <th>Code</th>                    

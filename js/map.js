@@ -32,7 +32,7 @@ $(document).ready(function() {
             },
             dataset:
             { 
-                    sorts: { 'code': 1 },
+                    sorts: { 'crimeRatio': -1 },
                     records: dataTable
             }
         });
@@ -46,8 +46,6 @@ function addListeners(poly, marker) {
             strokeWeight: 2,
             fillOpacity: 1
         });
-        // marker.setPosition(event.latLng);
-        // marker.setVisible(true);
 
         $("#ca-info").html(marker.labelContent);
     });
@@ -62,6 +60,8 @@ function addListeners(poly, marker) {
 
     google.maps.event.addListener(poly, 'click', function(event) {
         showCommunityInfo(marker.areaNumber, $('#year-filter').val());
+        $('#myModalLabel').html(marker.labelContent);
+        $('#myModal').modal('show');
     });
 }
 
@@ -250,13 +250,12 @@ function showCommunityInfo(area_number, year)
     })
 }
 
-function writeCommunityInfo(city, incidents, ratio, population, year, white, hispanic, asian, black) {
-    console.log(white);
+function writeCommunityInfo(city, incidents, ratio, population, year, white, hispanic, asian, black)
+{
     var general_info = "<p><b>" + city + "</b> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ". "
         + "This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people. " + 
           "In <b>" + city + "</b>:</p><ul><li>" + Math.round(white/population * 100) + "% of the population is <b>white</b>.</li><li>" + Math.round(hispanic/population*100) +
           "% of the population is <b>hispanic</b>.</li><li>" + Math.round(asian/population*100) + "% of the population is <b>asian</b>,</li><li>" + 
           Math.round(black/population*100) + "% of the population is <b>black</b>.</li></ul>";
-    $('#ca-info').append("<hr>");
-    $('#ca-info').append(general_info);
+    $('#modal-ca-info').html(general_info);
 }
