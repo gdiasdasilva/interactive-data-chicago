@@ -23,7 +23,7 @@ $(document).ready(function() {
         {
             features:
             {
-                paginate: false,
+                paginate: true,
                 sort: true,
                 pushState: true,
                 search: true,
