@@ -40,7 +40,16 @@ $(document).ready(function() {
         $('#my-table tr').each(function(){
             $(this).attr('id', $(this).find('td').eq(0).html());
         })
+
+        $('#my-table').dynatable().on('click', 'tr', function() {
+            if($(this).hasClass('rowSelected'))
+                $(this).removeClass('rowSelected');
+            else
+                $(this).addClass('rowSelected'); 
+        });
     })
+
+    
 });
 
 function addListeners(poly, marker) {
@@ -151,6 +160,8 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     var mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
+        mapTypeControl: false,
+        streetViewControl: false,
         styles: [{
             featureType: 'all',
             elementType: 'labels',
