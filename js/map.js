@@ -1,5 +1,42 @@
 $(document).ready(function() {
     updateMap(2003);
+
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca_table',
+            year: 2013,            
+        },
+    }).done(function(res) {
+        var dataTable = res.data;
+        for(x in dataTable)
+        {            
+            dataTable[x].code = parseInt(dataTable[x].code);
+            dataTable[x].population = parseInt(dataTable[x].population);
+            dataTable[x].totalIncidents = parseInt(dataTable[x].totalIncidents);  
+            dataTable[x].crimeRatio = parseInt((dataTable[x].crimeRatio * 100) | 0);
+        }            
+
+        $('#my-table').dynatable(
+        {
+            features:
+            {
+                paginate: false,
+                sort: true,
+                pushState: true,
+                search: true,
+                recordCount: false,
+                perPageSelect: false
+            },
+            dataset:
+            { 
+                    sorts: { 'code': 1 },
+                    records: dataTable
+            }
+        });
+    })
 });
 
 function addListeners(poly, marker) {

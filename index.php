@@ -11,7 +11,9 @@
         <link rel="stylesheet" type="text/css" href="css/styles.css"/>
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/paper/bootstrap.min.css"/>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/jquery.dynatable.css"/>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
+        <script type="text/javascript" src="js/jquery.dynatable.js"></script>        
     </head>
     <body style="height: 100%">
         <div class="row">
@@ -47,6 +49,25 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+        <div class="col-md-10 col-md-offset-1 well">
+        <table id="my-table" class="table">
+            <tr>
+                <thead>
+                    <th>Code</th>                    
+                    <th>Community Area</th>
+                    <th>Crime Ratio</th>
+                    <th>Total Incidents</th>
+                    <th>Population</th>                       
+                </thead>
+            </tr>
+            <tr>
+                <tbody id="table-content"></tbody>
+            </tr>
+        </table>
+        </div>
+        
         </div>
     </body>
 </html>
