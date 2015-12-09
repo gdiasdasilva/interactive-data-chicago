@@ -23,7 +23,7 @@ $(document).ready(function() {
         {
             features:
             {
-                paginate: true,
+                paginate: false,
                 sort: true,
                 pushState: true,
                 search: true,
@@ -36,6 +36,10 @@ $(document).ready(function() {
                     records: dataTable
             }
         });
+
+        $('#my-table tr').each(function(){
+            $(this).attr('id', $(this).find('td').eq(0).html());
+        })
     })
 });
 
@@ -58,10 +62,18 @@ function addListeners(poly, marker) {
         marker.setVisible(false);
     });
 
-    google.maps.event.addListener(poly, 'click', function(event) {
+    google.maps.event.addListener(poly, 'dblclick', function(event) {
         showCommunityInfo(marker.areaNumber, $('#year-filter').val());
         $('#myModalLabel').html(marker.labelContent);
         $('#myModal').modal('show');
+    });
+
+    google.maps.event.addListener(poly, 'click', function(event) {        
+        var tmpObj = $('#' + marker.areaNumber);
+        if(tmpObj.hasClass('rowSelected'))
+            tmpObj.removeClass('rowSelected');
+        else
+            tmpObj.addClass('rowSelected');        
     });
 }
 
@@ -138,6 +150,7 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     var bounds = new google.maps.LatLngBounds();
     var mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
+        disableDoubleClickZoom: true,
         styles: [{
             featureType: 'all',
             elementType: 'labels',

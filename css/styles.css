@@ -22,3 +22,9 @@ html, body {
 }
 
 th {background-color: #006a72}
+
+.rowSelected {
+     background-color: black;
+     border-color: red;
+     color: white;
+}
