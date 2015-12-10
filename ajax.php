@@ -69,4 +69,21 @@ if ($action == 'incidents_per_ca_table') {
     }
     echo json_encode(['data'=>$ca_incidents]);
 }
+if ($action == 'chart_ca_incidents') {
+    $area_code = $_POST['area_code'];
+    $q = "select total_incidents, year from view_total_incidents_per_year where area_code = $area_code and year > 2001";
+    $result = mysqli_query($link, $q);
+    $resPerYear = [];
+    foreach ($result as $r) {              
+        $resPerYear[$r['year']] = $r['total_incidents'];  
+    }
+
+    $q = "select total_incidents, year from view_total_incidents_per_year_global";
+    $result = mysqli_query($link, $q);
+    foreach ($result as $r) {              
+        $resPerYearGlobal[$r['year']] = $r['total_incidents'];  
+    }
+    
+    echo json_encode([$resPerYear, $resPerYearGlobal]);
+}
 ?>

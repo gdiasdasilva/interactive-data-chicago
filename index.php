@@ -13,7 +13,11 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="css/jquery.dynatable.css"/>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
-        <script type="text/javascript" src="js/jquery.dynatable.js"></script>        
+        <script type="text/javascript" src="js/jquery.dynatable.js"></script>       
+        <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>-->
+        <!-- USING MODIFIED VERSION OF CHART JS -->
+        <script type="text/javascript" src="js/chartjs.js"></script>       
+
     </head>
     <body style="height: 100%">
         <div class="row">
@@ -31,7 +35,10 @@
                 <h4 class="modal-title" id="myModalLabel"></h4>
               </div>
               <div class="modal-body">                
-                    <p id="modal-ca-info"></p>                
+                    <p id="modal-ca-info"></p>  
+                    <hr>
+                    <b>Crimes evolution over time</b>
+                    <canvas id="myChart" width="570" height="400"></canvas>
                 </div>
               </div>
               <div class="modal-footer">

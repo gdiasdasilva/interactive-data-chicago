@@ -1,6 +1,67 @@
 $(document).ready(function() {
     updateMap(2003);
 
+    $('#myModal').on('hidden.bs.modal', function () {
+        myNewChart.destroy();
+    })
+    
+    $('#myModal').on('shown.bs.modal', function (event) {    
+        $.ajax(
+        {
+            url: 'ajax.php',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                action: 'chart_ca_incidents',
+                area_code: $('#myModal').attr('name')
+            },
+        }).done(function(res)
+        {
+            var tmpData = [];
+            var tmpDataGlobal = [];
+            for(key in res[0]) {                
+                tmpData.push(parseInt(res[0][key]));
+                tmpDataGlobal.push(parseInt(res[1][key]));
+            }
+
+            var data =
+            {
+                labels: Object.keys(res[0]),
+                datasets:
+                [{
+                    label: "Total crimes in this C.A.",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: tmpData
+                },
+                {
+                    label: "Total crimes in Chicago",
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: tmpDataGlobal
+                }
+                ]
+            };
+
+            var ctx = document.getElementById("myChart").getContext("2d");
+            window.myNewChart = new Chart(ctx).Line(data,  {
+              responsive : false,
+              scaleUse2Y: true,
+              animation: true,
+              showScale: true,
+              multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+            });
+        });
+     });
+
     $.ajax({
         url: 'ajax.php',
         type: 'post',
@@ -48,8 +109,6 @@ $(document).ready(function() {
                 $(this).addClass('rowSelected'); 
         });
     })
-
-    
 });
 
 function addListeners(poly, marker) {
@@ -74,6 +133,7 @@ function addListeners(poly, marker) {
     google.maps.event.addListener(poly, 'dblclick', function(event) {
         showCommunityInfo(marker.areaNumber, $('#year-filter').val());
         $('#myModalLabel').html(marker.labelContent);
+        $('#myModal').attr('name', marker.areaNumber);
         $('#myModal').modal('show');
     });
 
