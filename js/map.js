@@ -1,13 +1,12 @@
 $(document).ready(function() {
     updateMap(2003);
-
-    $('#myModal').on('hidden.bs.modal', function () {
+    generateScatter();
+    generateTable();
+    $('#myModal').on('hidden.bs.modal', function() {
         myNewChart.destroy();
     })
-    
-    $('#myModal').on('shown.bs.modal', function (event) {    
-        $.ajax(
-        {
+    $('#myModal').on('shown.bs.modal', function(event) {
+        $.ajax({
             url: 'ajax.php',
             type: 'post',
             dataType: 'json',
@@ -15,20 +14,16 @@ $(document).ready(function() {
                 action: 'chart_ca_incidents',
                 area_code: $('#myModal').attr('name')
             },
-        }).done(function(res)
-        {
+        }).done(function(res) {
             var tmpData = [];
             var tmpDataGlobal = [];
-            for(key in res[0]) {                
+            for (key in res[0]) {
                 tmpData.push(parseInt(res[0][key]));
                 tmpDataGlobal.push(parseInt(res[1][key]));
             }
-
-            var data =
-            {
+            var data = {
                 labels: Object.keys(res[0]),
-                datasets:
-                [{
+                datasets: [{
                     label: "Total crimes in this C.A.",
                     fillColor: "rgba(220,220,220,0.2)",
                     strokeColor: "rgba(220,220,220,1)",
@@ -37,8 +32,7 @@ $(document).ready(function() {
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(220,220,220,1)",
                     data: tmpData
-                },
-                {
+                }, {
                     label: "Total crimes in Chicago",
                     fillColor: "rgba(151,187,205,0.2)",
                     strokeColor: "rgba(151,187,205,1)",
@@ -47,68 +41,18 @@ $(document).ready(function() {
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(151,187,205,1)",
                     data: tmpDataGlobal
-                }
-                ]
+                }]
             };
-
             var ctx = document.getElementById("myChart").getContext("2d");
-            window.myNewChart = new Chart(ctx).Line(data,  {
-              responsive : false,
-              scaleUse2Y: true,
-              animation: true,
-              showScale: true,
-              multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+            window.myNewChart = new Chart(ctx).Line(data, {
+                responsive: false,
+                scaleUse2Y: true,
+                animation: true,
+                showScale: true,
+                multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
             });
         });
-     });
-
-    $.ajax({
-        url: 'ajax.php',
-        type: 'post',
-        dataType: 'json',
-        data: {
-            action: 'incidents_per_ca_table',
-            year: 2013,            
-        },
-    }).done(function(res) {
-        var dataTable = res.data;
-        for(x in dataTable)
-        {            
-            dataTable[x].code = parseInt(dataTable[x].code);
-            dataTable[x].population = parseInt(dataTable[x].population);
-            dataTable[x].totalIncidents = parseInt(dataTable[x].totalIncidents);  
-            dataTable[x].crimeRatio = parseInt((dataTable[x].crimeRatio * 100) | 0);
-        }            
-
-        $('#my-table').dynatable(
-        {
-            features:
-            {
-                paginate: false,
-                sort: true,
-                pushState: true,
-                search: true,
-                recordCount: false,
-                perPageSelect: false
-            },
-            dataset:
-            { 
-                    sorts: { 'crimeRatio': -1 },
-                    records: dataTable
-            }
-        });
-
-        $('#my-table tr').each(function(){
-            $(this).attr('id', $(this).find('td').eq(0).html());
-        })
-
-        $('#my-table').dynatable().on('click', 'tr', function() {
-            if($(this).hasClass('rowSelected'))
-                $(this).removeClass('rowSelected');
-            else
-                $(this).addClass('rowSelected'); 
-        });
-    })
+    });
 });
 
 function addListeners(poly, marker) {
@@ -118,7 +62,6 @@ function addListeners(poly, marker) {
             strokeWeight: 2,
             fillOpacity: 1
         });
-
         $("#ca-info").html(marker.labelContent);
     });
     google.maps.event.addListener(poly, 'mouseout', function(event) {
@@ -129,20 +72,16 @@ function addListeners(poly, marker) {
         });
         marker.setVisible(false);
     });
-
     google.maps.event.addListener(poly, 'dblclick', function(event) {
         showCommunityInfo(marker.areaNumber, $('#year-filter').val());
         $('#myModalLabel').html(marker.labelContent);
         $('#myModal').attr('name', marker.areaNumber);
         $('#myModal').modal('show');
     });
-
-    google.maps.event.addListener(poly, 'click', function(event) {        
+    google.maps.event.addListener(poly, 'click', function(event) {
         var tmpObj = $('#' + marker.areaNumber);
-        if(tmpObj.hasClass('rowSelected'))
-            tmpObj.removeClass('rowSelected');
-        else
-            tmpObj.addClass('rowSelected');        
+        if (tmpObj.hasClass('rowSelected')) tmpObj.removeClass('rowSelected');
+        else tmpObj.addClass('rowSelected');
     });
 }
 
@@ -301,25 +240,23 @@ function updateMap(year) {
 }
 // Writes stats next to the map
 function writeStats(city, incidents, year, population) {
-    var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents/population * 100) | 0)+ ' crimes per 100 people. Mouseover the other areas to see some details!';
+    var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents / population * 100) | 0) + ' crimes per 100 people. Mouseover the other areas to see some details!';
     //console.log(info);
     $('#year-info').html(info);
 }
 
 function getAreaName(area_code) {
-  for (var g in geolocation) {
-    if (geolocation[g].metadata.AREA_NUMBE == area_code)
-      return geolocation[g].name;
-  }
+    for (var g in geolocation) {
+        if (geolocation[g].metadata.AREA_NUMBE == area_code) return geolocation[g].name;
+    }
 }
 
-function updateCommunityInfo(name, area_number){
+function updateCommunityInfo(name, area_number) {
     var info = "<h4>" + name + " <small>(" + area_number + ")</small></h4>";
     return info;
 }
 
-function showCommunityInfo(area_number, year)
-{
+function showCommunityInfo(area_number, year) {
     $.ajax({
         url: 'ajax.php',
         type: 'post',
@@ -334,12 +271,77 @@ function showCommunityInfo(area_number, year)
     })
 }
 
-function writeCommunityInfo(city, incidents, ratio, population, year, white, hispanic, asian, black)
-{
-    var general_info = "<p><b>" + city + "</b> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ". "
-        + "This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people. " + 
-          "In <b>" + city + "</b>:</p><ul><li>" + Math.round(white/population * 100) + "% of the population is <b>white</b>.</li><li>" + Math.round(hispanic/population*100) +
-          "% of the population is <b>hispanic</b>.</li><li>" + Math.round(asian/population*100) + "% of the population is <b>asian</b>,</li><li>" + 
-          Math.round(black/population*100) + "% of the population is <b>black</b>.</li></ul>";
+function writeCommunityInfo(city, incidents, ratio, population, year, white, hispanic, asian, black) {
+    var general_info = "<p><b>" + city + "</b> had " + incidents + " criminal incidents in " + year + ", with a population of " + population + ". " + "This means a crime rate of " + ((ratio * 100) | 0) + " crimes per 100 people. " + "In <b>" + city + "</b>:</p><ul><li>" + Math.round(white / population * 100) + "% of the population is <b>white</b>.</li><li>" + Math.round(hispanic / population * 100) + "% of the population is <b>hispanic</b>.</li><li>" + Math.round(asian / population * 100) + "% of the population is <b>asian</b>,</li><li>" + Math.round(black / population * 100) + "% of the population is <b>black</b>.</li></ul>";
     $('#modal-ca-info').html(general_info);
+}
+
+function generateScatter() {
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'scatter_poverty_incidents'
+        },
+    }).done(function(res) {
+        var dataScatter = [];
+        for (x in res) {
+            dataScatter.push({
+                "crime ratio": res[x].ratio,
+                "poverty level": res[x].poverty,
+                "type": getAreaName(x)
+            });
+        }
+        var visualization = d3plus.viz().container("#viz") // container DIV to hold the visualization
+            .data(dataScatter) // data to use with the visualization
+            .type("scatter") // visualization type
+            .id("type") // key for which our data is unique on
+            .x("crime ratio") // key for x-axis
+            .y("poverty level") // key for y-axis
+            .width(1000).height(500).size(7).title("Crime ratio and % of households below poverty level").draw();
+    });
+}
+
+function generateTable() {
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca_table',
+            year: 2013,
+        },
+    }).done(function(res) {
+        var dataTable = res.data;
+        for (x in dataTable) {
+            dataTable[x].code = parseInt(dataTable[x].code);
+            dataTable[x].population = parseInt(dataTable[x].population);
+            dataTable[x].totalIncidents = parseInt(dataTable[x].totalIncidents);
+            dataTable[x].crimeRatio = parseInt((dataTable[x].crimeRatio * 100) | 0);
+        }
+        $('#my-table').dynatable({
+            features: {
+                paginate: false,
+                sort: true,
+                pushState: true,
+                search: true,
+                recordCount: false,
+                perPageSelect: false
+            },
+            dataset: {
+                sorts: {
+                    'crimeRatio': -1
+                },
+                records: dataTable
+            }
+        });
+        $('#my-table tr').each(function() {
+            $(this).attr('id', $(this).find('td').eq(0).html());
+        })
+        $('#my-table').dynatable().on('click', 'tr', function() {
+            if ($(this).hasClass('rowSelected')) $(this).removeClass('rowSelected');
+            else $(this).addClass('rowSelected');
+        });
+    })
 }

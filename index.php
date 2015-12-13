@@ -16,8 +16,8 @@
         <script type="text/javascript" src="js/jquery.dynatable.js"></script>       
         <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>-->
         <!-- USING MODIFIED VERSION OF CHART JS -->
-        <script type="text/javascript" src="js/chartjs.js"></script>       
-
+        <script type="text/javascript" src="js/chartjs.js"></script>    
+        <script type="text/javascript" src="js/d3plus.full.min.js"></script>
     </head>
     <body style="height: 100%">
         <div class="row">
@@ -75,24 +75,30 @@
         </div>
         <hr>
         <div class="row">
-        <div class="col-md-10 col-md-offset-1 well">
-        <div class="text-center"><h3>Crimes per community area table</h3></div>
-        <table id="my-table" class="table table-bordered">
-            <tr>
-                <thead>
-                    <th>Code</th>                    
-                    <th>Community Area</th>
-                    <th>Crime Ratio</th>
-                    <th>Total Incidents</th>
-                    <th>Population</th>                       
-                </thead>
-            </tr>
-            <tr>
-                <tbody id="table-content"></tbody>
-            </tr>
-        </table>
+            <div class="col-md-10 col-md-offset-1 well">
+                <div class="text-center"><h3>Crimes per community area table</h3></div>
+                <table id="my-table" class="table table-bordered">
+                    <tr>
+                        <thead>
+                            <th>Code</th>                    
+                            <th>Community Area</th>
+                            <th>Crime Ratio</th>
+                            <th>Total Incidents</th>
+                            <th>Population</th>                       
+                        </thead>
+                    </tr>
+                    <tr>
+                        <tbody id="table-content"></tbody>
+                    </tr>
+                </table>
+            </div>
+            <hr>
         </div>
-        
+        <div class="row scatter">
+            <div class="text-center"><h3>Scatter Plot</h3></div>
+            <div id="viz">
+                
+            </div>
         </div>
     </body>
 </html>

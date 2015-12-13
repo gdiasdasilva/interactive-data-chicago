@@ -28,3 +28,11 @@ th {background-color: #006a72}
      border-color: red;
      color: white;
 }
+
+.scatter {     
+     height: 400px;
+}
+
+#viz {
+     margin: 0 auto;
+}
