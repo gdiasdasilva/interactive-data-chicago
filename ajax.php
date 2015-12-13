@@ -87,14 +87,15 @@ if ($action == 'chart_ca_incidents') {
     echo json_encode([$resPerYear, $resPerYearGlobal]);
 }
 if ($action == 'scatter_poverty_incidents') {
-    $q = "select area_code, area_name, houses_below_poverty, total_incidents, (white+black+asian+hispanic) as population from education e join census c join view_total_incidents_per_ca v where e.area_code = c.community_area and e.area_code = v.community_area";
+    $q = "select area_code, area_name, houses_below_poverty, unemployed, total_incidents, (white+black+asian+hispanic) as population from education e join census c join view_total_incidents_per_ca v where e.area_code = c.community_area and e.area_code = v.community_area";
     $result = mysqli_query($link, $q);
     $final = [];
     foreach ($result as $r)
     {  
       $ratio = round((($r['total_incidents']/$r['population']))*100);
       $poverty_percentage = floatval($r['houses_below_poverty']);
-      $final[$r['area_code']] = ['ratio' => $ratio, 'poverty' => $poverty_percentage];
+      $unemployed = floatval($r['unemployed']);
+      $final[$r['area_code']] = ['ratio' => $ratio, 'poverty' => $poverty_percentage, 'unemployed' => $unemployed];
     }
     
     echo json_encode($final);

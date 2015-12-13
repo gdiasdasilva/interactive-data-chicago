@@ -290,16 +290,28 @@ function generateScatter() {
             dataScatter.push({
                 "crime ratio": res[x].ratio,
                 "poverty level": res[x].poverty,
-                "type": getAreaName(x)
+                "unemployed": res[x].unemployed,
+                "area code": getAreaName(x)
             });
         }
-        var visualization = d3plus.viz().container("#viz") // container DIV to hold the visualization
-            .data(dataScatter) // data to use with the visualization
-            .type("scatter") // visualization type
-            .id("type") // key for which our data is unique on
-            .x("crime ratio") // key for x-axis
-            .y("poverty level") // key for y-axis
-            .width(1000).height(500).size(7).title("Crime ratio and % of households below poverty level").draw();
+        var visualization = d3plus.viz().container("#vizScatter")
+            .data(dataScatter)
+            .type("scatter")
+            .id("area code")
+            .x("crime ratio")
+            .y("poverty level")
+            .width(1000).height(500).size(7).ui([
+            {
+                "method": "y",                
+                "value"  : [{"Poverty rate": "poverty level"}, {"Unemployment rate": "unemployed"}]
+            }]).title("Crime ratio and % of households below poverty level").draw();
+        var visualization2 = d3plus.viz().container("#vizTree")
+            .data(dataScatter)
+            .type("tree_map")
+            .id("area code")
+            .size("crime ratio")
+            .width(1000).height(500).title("Crime ratio by Community Area")
+            .draw();
     });
 }
 

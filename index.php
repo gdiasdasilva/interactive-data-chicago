@@ -96,7 +96,12 @@
         </div>
         <div class="row scatter">
             <div class="text-center"><h3>Scatter Plot</h3></div>
-            <div id="viz">
+            <div id="vizScatter">
+                
+            </div>
+            
+            <div class="text-center"><h3>Tree Map</h3></div>
+            <div id="vizTree">
                 
             </div>
         </div>
