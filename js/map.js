@@ -1,14 +1,10 @@
 $(document).ready(function() {
     updateMap(2003);
     generateTable();
-
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        generateScatter();  
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        generateScatter();
         generateTreeMap();
     });
-
-
-
     $('#myModal').on('hidden.bs.modal', function() {
         myNewChart.destroy();
     })
@@ -225,6 +221,7 @@ $(document).ready(function($) {
     $('#year-filter').on('change', function(event) {
         var year = $(this).val();
         updateMap(year);
+        updateTable();
     });
 });
 
@@ -300,17 +297,14 @@ function generateScatter() {
                 "area code": getAreaName(x)
             });
         }
-        var visualization = d3plus.viz().container("#vizScatter")
-            .data(dataScatter)
-            .type("scatter")
-            .id("area code")
-            .x("crime ratio")
-            .y("poverty level")
-            .width(1000).height(500).size(7).ui([
-            {
-                "method": "y",                
-                "value"  : [{"Poverty rate": "poverty level"}, {"Unemployment rate": "unemployed"}]
-            }]).title("Crime ratio, % of households below poverty level and unemployment in the city of Chicago").draw();
+        var visualization = d3plus.viz().container("#vizScatter").data(dataScatter).type("scatter").id("area code").x("crime ratio").y("poverty level").width(1000).height(500).size(7).ui([{
+            "method": "y",
+            "value": [{
+                "Poverty rate": "poverty level"
+            }, {
+                "Unemployment rate": "unemployed"
+            }]
+        }]).title("Crime ratio, % of households below poverty level and unemployment in the city of Chicago").draw();
     });
 }
 
@@ -321,7 +315,7 @@ function generateTable() {
         dataType: 'json',
         data: {
             action: 'incidents_per_ca_table',
-            year: 2013,
+            year: $('#year-filter').val(),
         },
     }).done(function(res) {
         var dataTable = res.data;
@@ -357,6 +351,36 @@ function generateTable() {
     })
 }
 
+function updateTable() {
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'incidents_per_ca_table',
+            year: $('#year-filter').val(),
+        },
+    }).done(function(res) {
+        var dataTable = res.data;
+        for (x in dataTable) {
+            dataTable[x].code = parseInt(dataTable[x].code);
+            dataTable[x].population = parseInt(dataTable[x].population);
+            dataTable[x].totalIncidents = parseInt(dataTable[x].totalIncidents);
+            dataTable[x].crimeRatio = parseInt((dataTable[x].crimeRatio * 100) | 0);
+        }
+        var dynatable = $('#my-table').dynatable({
+            dataset: {
+                records: dataTable
+            }
+        }).data('dynatable');
+        dynatable.settings.dataset.originalRecords = dataTable;
+        dynatable.process();
+        $('#my-table tr').each(function() {
+            $(this).attr('id', $(this).find('td').eq(0).html());
+        })
+    })
+}
+
 function generateTreeMap() {
     $.ajax({
         url: 'ajax.php',
@@ -367,19 +391,12 @@ function generateTreeMap() {
         },
     }).done(function(res) {
         var dataTree = [];
-        for (x in res) {            
-            dataTree.push({                
+        for (x in res) {
+            dataTree.push({
                 "crime type": x,
-                "total crimes": res[x] 
+                "total crimes": res[x]
             });
         }
-        
-        var visualization2 = d3plus.viz().container("#vizTree")
-            .data(dataTree)
-            .type("tree_map")
-            .id("crime type")
-            .size("total crimes")
-            .width(1000).height(500).title("Distribution of type of crimes in the city of Chicago")
-            .draw();
+        var visualization2 = d3plus.viz().container("#vizTree").data(dataTree).type("tree_map").id("crime type").size("total crimes").width(1000).height(500).title("Distribution of type of crimes in the city of Chicago").draw();
     });
 }
