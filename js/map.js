@@ -297,8 +297,8 @@ function generateScatter() {
                 "area code": getAreaName(x)
             });
         }
-        var visualization = d3plus.viz().container("#vizScatter").data(dataScatter).type("scatter").id("area code").x("crime ratio").y("poverty level").width(1000).height(500).size(7).ui([{
-            "method": "y",
+        var visualization = d3plus.viz().container("#vizScatter").data(dataScatter).type("scatter").id("area code").y("crime ratio").x("poverty level").width(1000).height(500).size(7).ui([{
+            "method": "x",
             "value": [{
                 "Poverty rate": "poverty level"
             }, {
