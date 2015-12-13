@@ -36,3 +36,7 @@ th {background-color: #006a72}
 #vizTree, #vizScatter {
      margin: 0 auto;
 }
+
+#vizTree {
+     margin-bottom: 50px;
+}

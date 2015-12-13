@@ -1,7 +1,14 @@
 $(document).ready(function() {
     updateMap(2003);
-    generateScatter();
     generateTable();
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        generateScatter();  
+        generateTreeMap();
+    });
+
+
+
     $('#myModal').on('hidden.bs.modal', function() {
         myNewChart.destroy();
     })
@@ -241,7 +248,6 @@ function updateMap(year) {
 // Writes stats next to the map
 function writeStats(city, incidents, year, population) {
     var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents / population * 100) | 0) + ' crimes per 100 people. Mouseover the other areas to see some details!';
-    //console.log(info);
     $('#year-info').html(info);
 }
 
@@ -304,14 +310,7 @@ function generateScatter() {
             {
                 "method": "y",                
                 "value"  : [{"Poverty rate": "poverty level"}, {"Unemployment rate": "unemployed"}]
-            }]).title("Crime ratio and % of households below poverty level").draw();
-        var visualization2 = d3plus.viz().container("#vizTree")
-            .data(dataScatter)
-            .type("tree_map")
-            .id("area code")
-            .size("crime ratio")
-            .width(1000).height(500).title("Crime ratio by Community Area")
-            .draw();
+            }]).title("Crime ratio, % of households below poverty level and unemployment in the city of Chicago").draw();
     });
 }
 
@@ -356,4 +355,31 @@ function generateTable() {
             else $(this).addClass('rowSelected');
         });
     })
+}
+
+function generateTreeMap() {
+    $.ajax({
+        url: 'ajax.php',
+        type: 'post',
+        dataType: 'json',
+        data: {
+            action: 'tree_crimes_type'
+        },
+    }).done(function(res) {
+        var dataTree = [];
+        for (x in res) {            
+            dataTree.push({                
+                "crime type": x,
+                "total crimes": res[x] 
+            });
+        }
+        
+        var visualization2 = d3plus.viz().container("#vizTree")
+            .data(dataTree)
+            .type("tree_map")
+            .id("crime type")
+            .size("total crimes")
+            .width(1000).height(500).title("Distribution of type of crimes in the city of Chicago")
+            .draw();
+    });
 }

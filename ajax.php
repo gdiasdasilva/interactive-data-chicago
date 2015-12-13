@@ -100,4 +100,14 @@ if ($action == 'scatter_poverty_incidents') {
     
     echo json_encode($final);
 }
+if ($action == 'tree_crimes_type') {
+    $q = "select * from view_total_incidents_per_type";
+    $result = mysqli_query($link, $q);
+    foreach ($result as $r)
+    {  
+      $final[$r['primary_type']] = intval($r['total_incidents']);
+    }
+    
+    echo json_encode($final);
+}
 ?>
