@@ -89,7 +89,7 @@
                                     <thead>
                                         <th>Code</th>
                                         <th>Community Area</th>
-                                        <th>Crime Ratio</th>
+                                        <th data-dynatable-column="crimeRatio">Crime Ratio (per 100 people)</th>
                                         <th>Total Incidents</th>
                                         <th>Population</th>
                                     </thead>

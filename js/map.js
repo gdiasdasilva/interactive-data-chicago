@@ -1,5 +1,6 @@
 var polys = [],
-    map;
+indexes = [],
+map;
 $(document).ready(function() {
     updateMap(2003);
     generateTable();
@@ -57,24 +58,16 @@ $(document).ready(function() {
                 multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
             });
         });
-    });
+});
 });
 
 function addListeners(poly, label, area_number) {
     google.maps.event.addListener(poly, 'click', function(event) {
         for (var i in polys) {
-            polys[i].setOptions({
-                strokeColor: 'black',
-                strokeWeight: 0.4,
-                fillOpacity: 0.7
-            })
+            restorePoly(polys[i]);
         }
-        this.setOptions({
-            strokeColor: 'black',
-            strokeWeight: 2,
-            fillOpacity: 1
-        });
-        $("#ca-info").html("<h4>"+label.getContent()+"</h4>");
+        highlightPoly(this);
+        $("#ca-info").html("<h4>" + label.getContent() + "</h4>");
         var tmpObj = $('#' + area_number);
         if (tmpObj.hasClass('rowSelected')) tmpObj.removeClass('rowSelected');
         else tmpObj.addClass('rowSelected');
@@ -83,11 +76,9 @@ function addListeners(poly, label, area_number) {
         label.open(map);
         label.show();
     });
-
-    google.maps.event.addListener(poly, 'mouseout', function(event){
+    google.maps.event.addListener(poly, 'mouseout', function(event) {
         label.hide();
     })
-
     google.maps.event.addListener(poly, 'dblclick', function(event) {
         showCommunityInfo(area_number, $('#year-filter').val());
         $('#myModalLabel').html(label.getContent());
@@ -96,10 +87,9 @@ function addListeners(poly, label, area_number) {
     });
 }
 
-
-
 function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     $('#map').empty();
+    indexes = [];
     var bounds = new google.maps.LatLngBounds();
     var mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -117,11 +107,11 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
     for (var d in geolocation) {
         var name = geolocation[d].name,
-            coord = geolocation[d].simple_shape.coordinates[0][0],
-            area_number = geolocation[d].metadata.AREA_NUMBE,
-            sat = (incidents[area_number] - min) / ((max - min) * 1.0),
-            pts = [],
-            poly_bounds = new google.maps.LatLngBounds();
+        coord = geolocation[d].simple_shape.coordinates[0][0],
+        area_number = geolocation[d].metadata.AREA_NUMBE,
+        sat = (incidents[area_number] - min) / ((max - min) * 1.0),
+        pts = [],
+        poly_bounds = new google.maps.LatLngBounds();
         for (var j = 0; j < coord.length; j++) {
             pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
             bounds.extend(pts[j]);
@@ -147,6 +137,7 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             },
             position: poly_bounds.getCenter(),
         });
+        indexes[name] = poly;
         addListeners(poly, polygon_label, area_number);
         polys.push(poly);
     };
@@ -176,8 +167,8 @@ function updateMap(year) {
         },
     }).done(function(res) {
         var incidents = res.incidents,
-            max = res.max.total / res.max.population,
-            min = res.min.total / res.min.population;
+        max = res.max.total / res.max.population,
+        min = res.min.total / res.min.population;
         drawIncidentsPerCommunityAreaMap(incidents, min, max);
         writeStats(getAreaName(res.max.area_code), res.max.total, year, res.max.population);
     })
@@ -267,12 +258,12 @@ function generateTable() {
         }
         $('#my-table').dynatable({
             features: {
-                paginate: false,
+                paginate: true,
                 sort: true,
                 pushState: true,
                 search: true,
                 recordCount: false,
-                perPageSelect: false
+                perPageSelect: false,
             },
             dataset: {
                 sorts: {
@@ -285,8 +276,14 @@ function generateTable() {
             $(this).attr('id', $(this).find('td').eq(0).html());
         })
         $('#my-table').dynatable().on('click', 'tr', function() {
-            if ($(this).hasClass('rowSelected')) $(this).removeClass('rowSelected');
-            else $(this).addClass('rowSelected');
+            $(this).toggleClass('rowSelected');
+            var name = $($(this).find('td')[1]).text();
+            if ($(this).hasClass('rowSelected')) {
+                highlightPoly(indexes[name]);
+            }
+            else {
+                restorePoly(indexes[name]);
+            }
         });
     })
 }
@@ -339,4 +336,20 @@ function generateTreeMap() {
         }
         var visualization2 = d3plus.viz().container("#vizTree").data(dataTree).type("tree_map").id("crime type").size("total crimes").width(1000).height(500).title("Distribution of type of crimes in the city of Chicago").draw();
     });
+}
+
+function highlightPoly(poly) {
+    poly.setOptions({
+        strokeColor: 'black',
+        strokeWeight: 2,
+        fillOpacity: 1
+    });
+}
+
+function restorePoly(poly) {
+    poly.setOptions({
+        strokeColor: 'black',
+        strokeWeight: 0.4,
+        fillOpacity: 0.7
+    })
 }
