@@ -4,6 +4,7 @@
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
         <meta charset="utf-8">
         <title>Crimes visualization in Chicago</title>
+        <script type="text/javascript" src="js/colors.js"></script>
         <script type="text/javascript" src="js/community_areas.js"></script>
         <script src="js/jquery.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
@@ -13,6 +14,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="css/jquery.dynatable.css"/>
         <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
+        <script type="text/javascript" src="js/infobox.js"></script>
         <script type="text/javascript" src="js/jquery.dynatable.js"></script>
         <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>-->
         <!-- USING MODIFIED VERSION OF CHART JS -->

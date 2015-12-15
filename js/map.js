@@ -1,3 +1,5 @@
+var polys = [],
+    map;
 $(document).ready(function() {
     updateMap(2003);
     generateTable();
@@ -58,103 +60,43 @@ $(document).ready(function() {
     });
 });
 
-function addListeners(poly, marker) {
-    google.maps.event.addListener(poly, 'mouseover', function(event) {
+function addListeners(poly, label, area_number) {
+    google.maps.event.addListener(poly, 'click', function(event) {
+        for (var i in polys) {
+            polys[i].setOptions({
+                strokeColor: 'black',
+                strokeWeight: 0.4,
+                fillOpacity: 0.7
+            })
+        }
         this.setOptions({
             strokeColor: 'black',
             strokeWeight: 2,
             fillOpacity: 1
         });
-        $("#ca-info").html(marker.labelContent);
-    });
-    google.maps.event.addListener(poly, 'mouseout', function(event) {
-        this.setOptions({
-            strokeColor: 'black',
-            strokeWeight: 0.4,
-            fillOpacity: 0.7
-        });
-        marker.setVisible(false);
-    });
-    google.maps.event.addListener(poly, 'dblclick', function(event) {
-        showCommunityInfo(marker.areaNumber, $('#year-filter').val());
-        $('#myModalLabel').html(marker.labelContent);
-        $('#myModal').attr('name', marker.areaNumber);
-        $('#myModal').modal('show');
-    });
-    google.maps.event.addListener(poly, 'click', function(event) {
-        var tmpObj = $('#' + marker.areaNumber);
+        $("#ca-info").html("<h4>"+label.getContent()+"</h4>");
+        var tmpObj = $('#' + area_number);
         if (tmpObj.hasClass('rowSelected')) tmpObj.removeClass('rowSelected');
         else tmpObj.addClass('rowSelected');
     });
+    google.maps.event.addListener(poly, 'mouseover', function(event) {
+        label.open(map);
+        label.show();
+    });
+
+    google.maps.event.addListener(poly, 'mouseout', function(event){
+        label.hide();
+    })
+
+    google.maps.event.addListener(poly, 'dblclick', function(event) {
+        showCommunityInfo(area_number, $('#year-filter').val());
+        $('#myModalLabel').html(label.getContent());
+        $('#myModal').attr('name', area_number);
+        $('#myModal').modal('show');
+    });
 }
 
-function rgbToHex(rgb) {
-    return "#" + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
-}
 
-function componentToHex(comp) {
-    var hex = comp.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-
-function hsvToRgb(h, s, v) {
-    var r, g, b;
-    var i;
-    var f, p, q, t;
-    // Make sure our arguments stay in-range
-    h = Math.max(0, Math.min(360, h));
-    s = Math.max(0, Math.min(100, s));
-    v = Math.max(0, Math.min(100, v));
-    // We accept saturation and value arguments from 0 to 100 because that's
-    // how Photoshop represents those values. Internally, however, the
-    // saturation and value are calculated from a range of 0 to 1. We make
-    // That conversion here.
-    s /= 100;
-    v /= 100;
-    if (s == 0) {
-        // Achromatic (grey)
-        r = g = b = v;
-        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-    }
-    h /= 60; // sector 0 to 5
-    i = Math.floor(h);
-    f = h - i; // factorial part of h
-    p = v * (1 - s);
-    q = v * (1 - s * f);
-    t = v * (1 - s * (1 - f));
-    switch (i) {
-        case 0:
-            r = v;
-            g = t;
-            b = p;
-            break;
-        case 1:
-            r = q;
-            g = v;
-            b = p;
-            break;
-        case 2:
-            r = p;
-            g = v;
-            b = t;
-            break;
-        case 3:
-            r = p;
-            g = q;
-            b = v;
-            break;
-        case 4:
-            r = t;
-            g = p;
-            b = v;
-            break;
-        default: // case 5:
-            r = v;
-            g = p;
-            b = q;
-    }
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
 
 function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
     $('#map').empty();
@@ -172,33 +114,20 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             }],
         }]
     };
-    var polys = [];
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
     for (var d in geolocation) {
         var name = geolocation[d].name,
             coord = geolocation[d].simple_shape.coordinates[0][0],
             area_number = geolocation[d].metadata.AREA_NUMBE,
             sat = (incidents[area_number] - min) / ((max - min) * 1.0),
-            pts = [];
+            pts = [],
+            poly_bounds = new google.maps.LatLngBounds();
         for (var j = 0; j < coord.length; j++) {
             pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
             bounds.extend(pts[j]);
+            poly_bounds.extend(pts[j]);
         }
-        var marker = new MarkerWithLabel({
-            position: new google.maps.LatLng(0, 0),
-            draggable: false,
-            raiseOnDrag: false,
-            map: map,
-            labelContent: updateCommunityInfo(name, area_number),
-            labelAnchor: new google.maps.Point(30, 20),
-            labelClass: "labels", // the CSS class for the label
-            labelStyle: {
-                opacity: 1.0
-            },
-            areaNumber: area_number,
-            icon: "http://placehold.it/1x1",
-            visible: false
-        });
+        // Create poly
         var poly = new google.maps.Polygon({
             paths: pts,
             strokeColor: 'black',
@@ -207,7 +136,18 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             fillColor: rgbToHex(hsvToRgb(0, sat * 100, 100)),
             fillOpacity: 0.7
         });
-        addListeners(poly, marker);
+        // Create label
+        var polygon_label = new InfoBox({
+            content: name,
+            closeBoxURL: "",
+            boxStyle: {
+                textAlign: "center",
+                fontSize: "10pt",
+                width: "20px"
+            },
+            position: poly_bounds.getCenter(),
+        });
+        addListeners(poly, polygon_label, area_number);
         polys.push(poly);
     };
     for (var i = 0; i < polys.length; i++) {
