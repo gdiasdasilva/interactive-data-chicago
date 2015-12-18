@@ -22,15 +22,17 @@ $(document).ready(function() {
             },
         }).done(function(res) {
             var tmpData = [];
-            var tmpDataGlobal = [];
+            var tmpDataGlobal = [];        
+
             for (key in res[0]) {
-                tmpData.push(parseInt(res[0][key]));
-                tmpDataGlobal.push(parseInt(res[1][key]));
+                tmpData.push(Math.round(parseInt(res[0][key])/res[2]*100));
+                tmpDataGlobal.push(Math.round(parseInt(res[1][key])/res[3]*100));
             }
+
             var data = {
                 labels: Object.keys(res[0]),
                 datasets: [{
-                    label: "Total crimes in this C.A.",
+                    label: "Total crimes in " + getAreaName($('#myModal').attr('name')),
                     fillColor: "rgba(220,220,220,0.2)",
                     strokeColor: "rgba(220,220,220,1)",
                     pointColor: "rgba(220,220,220,1)",
@@ -39,7 +41,7 @@ $(document).ready(function() {
                     pointHighlightStroke: "rgba(220,220,220,1)",
                     data: tmpData
                 }, {
-                    label: "Total crimes in Chicago",
+                    label: "Total crimes in Chicago city",
                     fillColor: "rgba(151,187,205,0.2)",
                     strokeColor: "rgba(151,187,205,1)",
                     pointColor: "rgba(151,187,205,1)",
@@ -51,12 +53,12 @@ $(document).ready(function() {
             };
             var ctx = document.getElementById("myChart").getContext("2d");
             window.myNewChart = new Chart(ctx).Line(data, {
-                responsive: false,
-                scaleUse2Y: true,
+                responsive: false,                
                 animation: true,
                 showScale: true,
                 multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
             });
+            document.getElementById("legendDiv").innerHTML = myNewChart.generateLegend();
         });
 });
 });

@@ -39,8 +39,9 @@
                         <div class="modal-body">
                             <p id="modal-ca-info"></p>
                             <hr>
-                            <b>Crimes evolution over time</b>
+                            <b>Comparing crime ratio evolution over time</b>
                             <canvas id="myChart" width="570" height="400"></canvas>
+                            <div id="legendDiv"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
