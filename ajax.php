@@ -83,8 +83,20 @@ if ($action == 'chart_ca_incidents') {
     foreach ($result as $r) {              
         $resPerYearGlobal[$r['year']] = $r['total_incidents'];  
     }
+
+    $q = "select (hispanic + asian + black + white) as total from census where community_area = $area_code";
+    $result = mysqli_query($link, $q);
+    foreach ($result as $r) {              
+        $commAreaPop = $r['total'];  
+    }
+
+    $q = "select sum(hispanic + asian + black + white) as total from census";
+    $result = mysqli_query($link, $q);
+    foreach ($result as $r) {              
+        $chicagoPop = $r['total'];  
+    }
     
-    echo json_encode([$resPerYear, $resPerYearGlobal]);
+    echo json_encode([$resPerYear, $resPerYearGlobal, $commAreaPop, $chicagoPop]);
 }
 if ($action == 'scatter_poverty_incidents') {
     $q = "select area_code, area_name, houses_below_poverty, unemployed, total_incidents, (white+black+asian+hispanic) as population from education e join census c join view_total_incidents_per_ca v where e.area_code = c.community_area and e.area_code = v.community_area";
