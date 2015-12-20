@@ -65,6 +65,7 @@
                         <option value="<?=$y?>"><?=$y?></option>
                         <? endforeach ?>
                     </select>
+                    <button type="button" class="btn btn-primary btn-block">Compare with previous year</button>
                 </div>
                 <div class="panel">
                     <div class="panel-body">
