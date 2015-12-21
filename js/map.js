@@ -1,6 +1,5 @@
 var polys = [],
-    indexes = [],
-    map;
+indexes = [];
 $(document).ready(function() {
     updateMap(2003);
     generateTable();
@@ -22,13 +21,11 @@ $(document).ready(function() {
             },
         }).done(function(res) {
             var tmpData = [];
-            var tmpDataGlobal = [];        
-
+            var tmpDataGlobal = [];
             for (key in res[0]) {
-                tmpData.push(Math.round(parseInt(res[0][key])/res[2]*100));
-                tmpDataGlobal.push(Math.round(parseInt(res[1][key])/res[3]*100));
+                tmpData.push(Math.round(parseInt(res[0][key]) / res[2] * 100));
+                tmpDataGlobal.push(Math.round(parseInt(res[1][key]) / res[3] * 100));
             }
-
             var data = {
                 labels: Object.keys(res[0]),
                 datasets: [{
@@ -53,17 +50,17 @@ $(document).ready(function() {
             };
             var ctx = document.getElementById("myChart").getContext("2d");
             window.myNewChart = new Chart(ctx).Line(data, {
-                responsive: false,                
+                responsive: false,
                 animation: true,
                 showScale: true,
                 multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
             });
             document.getElementById("legendDiv").innerHTML = myNewChart.generateLegend();
         });
-    });
+});
 });
 
-function addListeners(poly, label, area_number) {
+function addListeners(poly, label, area_number, map) {
     google.maps.event.addListener(poly, 'click', function(event) {
         for (var i in polys) {
             restorePoly(polys[i]);
@@ -90,10 +87,15 @@ function addListeners(poly, label, area_number) {
 }
 
 function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
-    $('#map').empty();
+    // Remove old polys
+    for (var i = 0; i < polys.length; i++) {
+        polys[i].setMap(null);
+    }
+    polys = [];
     indexes = [];
-    var bounds = new google.maps.LatLngBounds();
-    var mapOptions = {
+    $('#map').empty();
+    var bounds = new google.maps.LatLngBounds(),
+    mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
         mapTypeControl: false,
@@ -105,15 +107,15 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
                 visibility: 'off'
             }],
         }]
-    };
+    },
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
     for (var d in geolocation) {
         var name = geolocation[d].name,
-            coord = geolocation[d].simple_shape.coordinates[0][0],
-            area_number = geolocation[d].metadata.AREA_NUMBE,
-            sat = (incidents[area_number] - min) / ((max - min) * 1.0),
-            pts = [],
-            poly_bounds = new google.maps.LatLngBounds();
+        coord = geolocation[d].simple_shape.coordinates[0][0],
+        area_number = geolocation[d].metadata.AREA_NUMBE,
+        sat = (incidents[area_number] - min) / ((max - min) * 1.0),
+        pts = [],
+        poly_bounds = new google.maps.LatLngBounds();
         for (var j = 0; j < coord.length; j++) {
             pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
             bounds.extend(pts[j]);
@@ -140,7 +142,7 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
             position: poly_bounds.getCenter(),
         });
         indexes[name] = poly;
-        addListeners(poly, polygon_label, area_number);
+        addListeners(poly, polygon_label, area_number, map);
         polys.push(poly);
     };
     for (var i = 0; i < polys.length; i++) {
@@ -152,9 +154,10 @@ function drawIncidentsPerCommunityAreaMap(incidents, min, max) {
 
 function drawYearComparison(curr_incidents, prev_incidents) {
     $('#map').empty();
+    polys = [];
     indexes = [];
-    var bounds = new google.maps.LatLngBounds();
-    var mapOptions = {
+    var bounds = new google.maps.LatLngBounds(),
+    mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDoubleClickZoom: true,
         mapTypeControl: false,
@@ -166,22 +169,31 @@ function drawYearComparison(curr_incidents, prev_incidents) {
                 visibility: 'off'
             }],
         }]
-    };
-    var maxPctDiff = 0;
-    for (var i in curr_incidents) {
-        var pct = get_pct_diff(curr_incidents[i],prev_incidents[i]);
-        maxPctDiff = Math.max(pct, maxPctDiff);
-    }
+    },
+    maxPosPctDiff = 0,
+    maxNegPctDiff = 0,
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    for (var i in curr_incidents) {
+        var pct = get_pct_diff(curr_incidents[i], prev_incidents[i]);
+        if (curr_incidents[i] - prev_incidents[i] > 0)
+            maxPosPctDiff = Math.max(pct, maxPosPctDiff);
+        else {
+            console.log(pct);
+
+            maxNegPctDiff = Math.max(pct, maxNegPctDiff);
+        }
+    }
+    console.log(maxPosPctDiff, maxNegPctDiff);
     for (var d in geolocation) {
         var name = geolocation[d].name,
-            coord = geolocation[d].simple_shape.coordinates[0][0],
-            area_number = geolocation[d].metadata.AREA_NUMBE,
-            diff = curr_incidents[area_number] - prev_incidents[area_number],
-            pct = get_pct_diff(curr_incidents[area_number], prev_incidents[area_number]),
-            sat = pct>-0.1 && pct<0.1?0:pct/ maxPct,
-            pts = [],
-            poly_bounds = new google.maps.LatLngBounds();
+        coord = geolocation[d].simple_shape.coordinates[0][0],
+        area_number = geolocation[d].metadata.AREA_NUMBE,
+        diff = curr_incidents[area_number] - prev_incidents[area_number],
+        pct = get_pct_diff(curr_incidents[area_number], prev_incidents[area_number]),
+        sat = diff > 0 ? pct/maxPosPctDiff : pct / maxNegPctDiff,
+        pts = [],
+        poly_bounds = new google.maps.LatLngBounds();
+        console.log(name, curr_incidents[area_number] - prev_incidents[area_number], sat);
         for (var j = 0; j < coord.length; j++) {
             pts[j] = new google.maps.LatLng(coord[j][1], coord[j][0]);
             bounds.extend(pts[j]);
@@ -193,7 +205,7 @@ function drawYearComparison(curr_incidents, prev_incidents) {
             strokeColor: 'black',
             strokeOpacity: 1,
             strokeWeight: 0.4,
-            fillColor: rgbToHex(hsvToRgb(diff>0?100:0, sat * 100, 100)),
+            fillColor: rgbToHex(hsvToRgb(diff > 0 ? 100 : 0, sat * 100, 100)),
             fillOpacity: 0.7
         });
         // Create label
@@ -208,7 +220,7 @@ function drawYearComparison(curr_incidents, prev_incidents) {
             position: poly_bounds.getCenter(),
         });
         indexes[name] = poly;
-        addListeners(poly, polygon_label, area_number);
+        addListeners(poly, polygon_label, area_number, map);
         polys.push(poly);
     };
     for (var i = 0; i < polys.length; i++) {
@@ -223,15 +235,24 @@ $(document).ready(function($) {
         var year = $(this).val();
         updateMap(year);
         updateTable();
+        $('#reset-year-comparison').addClass('hidden');
+        $('#year-comparison-filter').empty();
+        for (var i = year - 1; i >= 2003; i--)
+            $('#year-comparison-filter').append('<option>'+i+'</option>');
     });
     $('#year-comparison').on('click', function(event) {
         var curr_year = $('#year-filter').val();
-        if (curr_year == 2003)
-            return;
-        var prev_year = curr_year - 1,
+        if (curr_year == 2003) return;
+        var prev_year = $('#year-comparison-filter').val(),
         curr_incidents = getYearIncidents(curr_year),
         prev_incidents = getYearIncidents(prev_year);
         drawYearComparison(curr_incidents, prev_incidents);
+        $('#reset-year-comparison').removeClass('hidden');
+    });
+    $('#reset-year-comparison').on('click',function(event) {
+        var curr_year = $('#year-filter').val();
+        updateMap(curr_year);
+        $(this).addClass('hidden');
     });
 });
 
@@ -246,14 +267,15 @@ function updateMap(year) {
         },
     }).done(function(res) {
         var incidents = res.incidents,
-            max = res.max.total / res.max.population,
-            min = res.min.total / res.min.population;
+        max = res.max.total / res.max.population,
+        min = res.min.total / res.min.population;
         drawIncidentsPerCommunityAreaMap(incidents, min, max);
         writeStats(getAreaName(res.max.area_code), res.max.total, year, res.max.population);
     })
 }
 
 function getYearIncidents(year) {
+    var incidents = [];
     $.ajax({
         url: 'ajax.php',
         type: 'post',
@@ -263,11 +285,12 @@ function getYearIncidents(year) {
             action: 'incidents_per_ca',
             year: year
         },
-    }).done(function(res) {
-        return res.incidents;
-    })
+        success: function(res) {
+            incidents = res.incidents;
+        }
+    });
+    return incidents;
 }
-
 // Writes stats next to the map
 function writeStats(city, incidents, year, population) {
     var info = '<b>' + city + '</b> had ' + incidents + ' crimes commited in ' + year + ', making it the most dangerous city in Chicago. With a population of ' + population + ', this yields a crime rate of ' + ((incidents / population * 100) | 0) + ' crimes per 100 people. Mouseover the other areas to see some details!';
@@ -374,6 +397,7 @@ function generateTable() {
             $(this).toggleClass('rowSelected');
             var name = $($(this).find('td')[1]).text();
             if ($(this).hasClass('rowSelected')) {
+                console.log(indexes);
                 highlightPoly(indexes[name]);
             } else {
                 restorePoly(indexes[name]);
@@ -432,10 +456,9 @@ function generateTreeMap() {
     });
 }
 
-function get_pct_diff (a, b) {
-    var pct = a/b;
-    if (pct > 1)
-        pct = 1 - pct;
+function get_pct_diff(a, b) {
+    var pct = (a - b) / a;
+    if (pct < 0) pct = 1 - pct;
     return pct;
 }
 

@@ -74,28 +74,28 @@ if ($action == 'chart_ca_incidents') {
     $q = "select total_incidents, year from view_total_incidents_per_year where area_code = $area_code and year > 2001";
     $result = mysqli_query($link, $q);
     $resPerYear = [];
-    foreach ($result as $r) {              
-        $resPerYear[$r['year']] = $r['total_incidents'];  
+    foreach ($result as $r) {
+        $resPerYear[$r['year']] = $r['total_incidents'];
     }
 
     $q = "select total_incidents, year from view_total_incidents_per_year_global";
     $result = mysqli_query($link, $q);
-    foreach ($result as $r) {              
-        $resPerYearGlobal[$r['year']] = $r['total_incidents'];  
+    foreach ($result as $r) {
+        $resPerYearGlobal[$r['year']] = $r['total_incidents'];
     }
 
     $q = "select (hispanic + asian + black + white) as total from census where community_area = $area_code";
     $result = mysqli_query($link, $q);
-    foreach ($result as $r) {              
-        $commAreaPop = $r['total'];  
+    foreach ($result as $r) {
+        $commAreaPop = $r['total'];
     }
 
     $q = "select sum(hispanic + asian + black + white) as total from census";
     $result = mysqli_query($link, $q);
-    foreach ($result as $r) {              
-        $chicagoPop = $r['total'];  
+    foreach ($result as $r) {
+        $chicagoPop = $r['total'];
     }
-    
+
     echo json_encode([$resPerYear, $resPerYearGlobal, $commAreaPop, $chicagoPop]);
 }
 if ($action == 'scatter_poverty_incidents') {
@@ -103,23 +103,23 @@ if ($action == 'scatter_poverty_incidents') {
     $result = mysqli_query($link, $q);
     $final = [];
     foreach ($result as $r)
-    {  
+    {
       $ratio = round((($r['total_incidents']/$r['population']))*100);
       $poverty_percentage = floatval($r['houses_below_poverty']);
       $unemployed = floatval($r['unemployed']);
       $final[$r['area_code']] = ['ratio' => $ratio, 'poverty' => $poverty_percentage, 'unemployed' => $unemployed];
     }
-    
+
     echo json_encode($final);
 }
 if ($action == 'tree_crimes_type') {
     $q = "select * from view_total_incidents_per_type";
     $result = mysqli_query($link, $q);
     foreach ($result as $r)
-    {  
+    {
       $final[$r['primary_type']] = intval($r['total_incidents']);
     }
-    
+
     echo json_encode($final);
 }
 ?>

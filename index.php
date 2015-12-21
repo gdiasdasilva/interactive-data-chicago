@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php include 'connection.php'; connectToDB(); ?>
 <html style="height: 100%">
     <head>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
@@ -13,7 +14,7 @@
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/paper/bootstrap.min.css"/>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <link rel="stylesheet" type="text/css" href="css/jquery.dynatable.css"/>
-        <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
+        <script type="text/javascript" src="https://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
         <script type="text/javascript" src="js/infobox.js"></script>
         <script type="text/javascript" src="js/jquery.dynatable.js"></script>
         <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>-->
@@ -45,7 +46,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        <button  type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -60,13 +61,21 @@
                             <p id="ca-info"></p>
                         </div>
                     </div>
-                    <label>Year</label>
-                    <select id="year-filter" class="form-control">
-                        <? foreach (range(2003, 2014) as $y):?>
-                        <option value="<?=$y?>"><?=$y?></option>
-                        <? endforeach ?>
-                    </select>
-                    <button type="button" class="btn btn-primary btn-block">Compare with previous year</button>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <select id="year-filter" class="form-control">
+                            <? foreach (range(2003, 2014) as $y): ?>
+                            <option value="<?=$y?>"><?=$y?></option>
+                            <? endforeach ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Compare with:</label>
+                        <select id="year-comparison-filter" class="form-control">
+                        </select>
+                        <button id="year-comparison" type="button" class="btn btn-primary btn-block">Compare</button>
+                        <button id="reset-year-comparison" type="button" class="form-control hidden btn btn-warning btn-block">Reset</button>
+                    </div>
                 </div>
                 <div class="panel">
                     <div class="panel-body">
