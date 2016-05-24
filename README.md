@@ -5,6 +5,8 @@ This project is hosted on Heroku and you can visit it <a href="https://rocky-cli
 
 Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crimes from 2001 to present (City of Chicago - Data Portal)</a>
 
+This project was developed by me and <a href="https://github.com/luisafonsocarvalho/">Luis</a> for the Interactive Data Visualization course @ FCT-UNL.
+
 ### Basic usage
 * Double-click on a community area will show its details and evolution over time.
 * Single click on community areas will highlight them in the table for further analysis. This action is cumulative.
@@ -27,6 +29,8 @@ sed -i -e "1d" rows.csv -> **Remove first line from file. ~5min**
 python parser.py > script.sql -> **Creates the script.sql file with all the INSERT statements**
 
 mysql -h localhost -u "username" -p "password" < script.sql -> **Run script with INSERT statements. ~20min**
+
+<hr>
 
 ### More images
 
