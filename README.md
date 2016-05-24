@@ -5,7 +5,6 @@ Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-t
 
 ## Data preparation for populating database
 
-### Details
 Python script to convert `.csv` file to SQL script with `INSERT` statements.
 The database name should be `vid`.
 The `crimes`table must exist.
