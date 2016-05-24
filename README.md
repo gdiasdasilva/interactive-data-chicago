@@ -5,7 +5,11 @@ This project is hosted on Heroku and you can visit it <a href="https://rocky-cli
 
 Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crimes from 2001 to present (City of Chicago - Data Portal)</a>
 
-<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/1.png"/>
+### Basic usage
+* Double-click on a community area will show its details and evolution over time.
+* Single click on community areas will highlight them in the table for further analysis. This action is cumulative.
+* Clicks on table entries will, as well, highlight community areas on the map.
+* The **Charts** tab allows the user to compare data in different ways (scatter plot, treemap).
 
 <hr>
 
@@ -29,11 +33,6 @@ mysql -h localhost -u "username" -p "password" < script.sql -> **Run script with
 **Main screen with year comparation**
 
 <img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/2.png"/>
-<hr>
-
-**Data table, connected with map**
-
-<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/3.png"/>
 <hr>
 
 **Data scatter plot**
