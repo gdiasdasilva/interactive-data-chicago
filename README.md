@@ -17,3 +17,11 @@ sed -i -e "1d" rows.csv -> **Remove first line from file. ~5min**
 python parser.py > script.sql -> **Creates the script.sql file with all the INSERT statements**
 
 mysql -h localhost -u "username" -p "password" < script.sql -> **Run script with INSERT statements. ~20min**
+
+## Screenshots
+
+<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/1.png"/>
+<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/2.png"/>
+<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/3.png"/>
+<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/4.png"/>
+<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/5.png"/>
