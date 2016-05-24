@@ -3,9 +3,9 @@ Understanding criminality in Chicago through interactive data visualization.
 
 This project is hosted on Heroku and you can visit it <a href="https://rocky-cliffs-5877.herokuapp.com">here</a>.
 
-Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crimes from 2001 to present (City of Chicago - Data Portal)</a>
+Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crimes from 2001 to present (City of Chicago - Data Portal)</a>.
 
-This project was developed by me and <a href="https://github.com/luisafonsocarvalho/">Luis</a> for the Interactive Data Visualization course @ FCT-UNL.
+This project was developed by me and <a href="https://github.com/luisafonsocarvalho/">Luís</a> for the Interactive Data Visualization course @ FCT-UNL.
 
 ### Basic usage
 * Double-click on a community area will show its details and evolution over time.
