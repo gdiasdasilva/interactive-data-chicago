@@ -5,7 +5,7 @@ This project is hosted on Heroku and you can visit it <a href="https://rocky-cli
 
 Data source: <a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crimes from 2001 to present (City of Chicago - Data Portal)</a>.
 
-This project was developed by me and <a href="https://github.com/luisafonsocarvalho/">Luís</a> for the Interactive Data Visualization course @ FCT-UNL.
+This project was developed by <a href="https://github.com/luisafonsocarvalho/">Luís</a> and me for Interactive Data Visualization course @ FCT-UNL.
 
 ### Basic usage
 * Double-click on a community area will show its details and evolution over time.
