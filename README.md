@@ -36,14 +36,14 @@ mysql -h localhost -u "username" -p "password" < script.sql -> **Run script with
 
 **Main screen with year comparation**
 
-<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/2.png"/>
+<img src="http://imgur.com/Q3Y4Hsf.png"/>
 <hr>
 
 **Data scatter plot**
 
-<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/4.png"/>
+<img src="http://imgur.com/r6QfRQX.png"/>
 <hr>
 
 **Chicago community area detail and evolution**
 
-<img src="https://dl.dropboxusercontent.com/u/2937374/GitHub%20Images/idv/6.png"/>
+<img src="http://imgur.com/xTQCzoT.png"/>
